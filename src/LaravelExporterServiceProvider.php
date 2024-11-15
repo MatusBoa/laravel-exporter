@@ -19,10 +19,7 @@ final class LaravelExporterServiceProvider extends ServiceProvider implements De
     public function register(): void
     {
         $this->app->bind(CollectorRegistryInterface::class, CollectorRegistry::class);
-    }
 
-    public function boot()
-    {
         $this->app->when(CollectorRegistryInterface::class)
             ->needs(CollectorInterface::class)
             ->give(TestingCollector::class);
