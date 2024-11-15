@@ -1,0 +1,26 @@
+{
+    "name": "matusboa/laravel-exporter",
+    "description": "Prometheus Exporter for Laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matúš Koterba"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Matusboa\\LaravelExporter\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^11.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable"
+}
