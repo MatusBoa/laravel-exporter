@@ -4,22 +4,28 @@ declare(strict_types = 1);
 
 namespace Matusboa\LaravelExporter\Registry;
 
+use Matusboa\LaravelExporter\Collector\TestingCollector;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 
 class CollectorRegistry implements CollectorRegistryInterface
 {
-    private array $collectors = [];
-
     public function __construct(
-        CollectorInterface ...$collectors,
-    ) {
-        $this->collectors = $collectors;
-    }
+        protected array $collectors = [],
+    ) {}
 
     public function registeredCollectors(): array
     {
         return $this->collectors;
     }
 
+    /**
+     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
+     */
+    public static function getDefaultCollectors(): array
+    {
+        return [
+            TestingCollector::class,
+        ];
+    }
 }
