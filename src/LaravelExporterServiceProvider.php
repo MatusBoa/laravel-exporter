@@ -8,8 +8,6 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Matusboa\LaravelExporter\Registry\CollectorRegistry;
-use Matusboa\LaravelExporter\Collector\QueueCollector;
-use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 
 final class LaravelExporterServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -21,7 +19,7 @@ final class LaravelExporterServiceProvider extends ServiceProvider implements De
     {
         $this->app->bind(
             CollectorRegistryInterface::class,
-            static fn (Application $app): CollectorRegistryInterface => new CollectorRegistry(
+            static fn(Application $app): CollectorRegistryInterface => new CollectorRegistry(
                 $app['config']->get('prometheus_exporter.collectors', []),
                 $app['config']->get('database.redis', []),
                 $app['config']->get('prometheus_exporter.redis_connection', 'default'),
