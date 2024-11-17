@@ -17,7 +17,7 @@ class CollectorRegistry implements CollectorRegistryInterface
         protected array $collectors,
         protected string $redisConnection,
     ) {
-        dd(Redis::connection($this->redisConnection));
+        dd(Redis::connection($this->redisConnection)->client());
         //$this->registry = \Prometheus\CollectorRegistry::getDefault();
     }
 
