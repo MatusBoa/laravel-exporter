@@ -6,7 +6,7 @@ namespace Matusboa\LaravelExporter\Collector;
 
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 
-final class TestingCollector implements CollectorInterface
+final class QueueCollector implements CollectorInterface
 {
 
 }

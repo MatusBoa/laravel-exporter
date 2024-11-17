@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Matusboa\LaravelExporter\Registry\CollectorRegistry;
-use Matusboa\LaravelExporter\Collector\TestingCollector;
+use Matusboa\LaravelExporter\Collector\QueueCollector;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 
@@ -19,11 +19,11 @@ final class LaravelExporterServiceProvider extends ServiceProvider implements De
      */
     public function register(): void
     {
-        $this->app->bind(CollectorRegistryInterface::class, static function (Application $app): CollectorRegistryInterface {
-            return new CollectorRegistry(
+        $this->app->bind(
+            CollectorRegistryInterface::class,
+            static fn (Application $app): CollectorRegistryInterface => new CollectorRegistry(
                 $app['config']->get('prometheus_exporter.collectors', []),
-            );
-        });
+            ));
     }
 
     public function boot(): void

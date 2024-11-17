@@ -4,15 +4,19 @@ declare(strict_types = 1);
 
 namespace Matusboa\LaravelExporter\Registry;
 
-use Matusboa\LaravelExporter\Collector\TestingCollector;
+use Matusboa\LaravelExporter\Collector\QueueCollector;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 
 class CollectorRegistry implements CollectorRegistryInterface
 {
+    protected \Prometheus\CollectorRegistry $registry;
+
     public function __construct(
         protected array $collectors = [],
-    ) {}
+    ) {
+        $this->registry = \Prometheus\CollectorRegistry::getDefault();
+    }
 
     public function registeredCollectors(): array
     {
@@ -25,7 +29,7 @@ class CollectorRegistry implements CollectorRegistryInterface
     public static function getDefaultCollectors(): array
     {
         return [
-            TestingCollector::class,
+            QueueCollector::class,
         ];
     }
 }
