@@ -21,7 +21,6 @@ final class LaravelExporterServiceProvider extends ServiceProvider implements De
             CollectorRegistryInterface::class,
             static fn(Application $app): CollectorRegistryInterface => new CollectorRegistry(
                 $app['config']->get('prometheus_exporter.collectors', []),
-                $app['config']->get('database.redis', []),
                 $app['config']->get('prometheus_exporter.redis_connection', 'default'),
             ));
     }

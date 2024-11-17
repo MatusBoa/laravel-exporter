@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Matusboa\LaravelExporter\Registry;
 
+use Illuminate\Support\Facades\Redis;
 use Matusboa\LaravelExporter\Collector\QueueCollector;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
@@ -14,11 +15,10 @@ class CollectorRegistry implements CollectorRegistryInterface
 
     public function __construct(
         protected array $collectors,
-        protected array $redisConnections,
         protected string $redisConnection,
     ) {
-        dd($this->redisConnection, $this->redisConnections);
-        $this->registry = \Prometheus\CollectorRegistry::getDefault();
+        dd(Redis::connection($this->redisConnection));
+        //$this->registry = \Prometheus\CollectorRegistry::getDefault();
     }
 
     public function registeredCollectors(): array
