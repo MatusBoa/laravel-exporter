@@ -13,7 +13,9 @@ class CollectorRegistry implements CollectorRegistryInterface
     protected \Prometheus\CollectorRegistry $registry;
 
     public function __construct(
-        protected array $collectors = [],
+        protected array $collectors,
+        protected array $redisConnections,
+        protected string $redisConnection,
     ) {
         $this->registry = \Prometheus\CollectorRegistry::getDefault();
     }
