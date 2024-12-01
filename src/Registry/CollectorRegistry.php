@@ -1,38 +1,70 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Registry;
 
-use Illuminate\Support\Facades\Redis;
-use Matusboa\LaravelExporter\Collector\QueueCollector;
-use Matusboa\LaravelExporter\Contract\CollectorInterface;
+use Illuminate\Contracts\Cache\Repository;
+use Matusboa\LaravelExporter\Adapter\StorageAdapter;
+use Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 
 class CollectorRegistry implements CollectorRegistryInterface
 {
+    /**
+     * @var \Prometheus\CollectorRegistry
+     */
     protected \Prometheus\CollectorRegistry $registry;
 
+    /**
+     * @var array<array-key, class-string<\Matusboa\LaravelExporter\Contract\Collector\CollectorInterface>>
+     */
+    protected array $collectors = [];
+
+    /**
+     * @param \Illuminate\Contracts\Cache\Repository $repository
+     */
     public function __construct(
-        protected array $collectors,
-        protected string $redisConnection,
+        Repository $repository,
     ) {
-        dd(Redis::connection($this->redisConnection)->client());
-        //$this->registry = \Prometheus\CollectorRegistry::getDefault();
+        $this->registry = new \Prometheus\CollectorRegistry(
+            new StorageAdapter($repository),
+        );
     }
 
-    public function registeredCollectors(): array
+    /**
+     * @inheritDoc
+     */
+    public function getCollectors(): array
     {
         return $this->collectors;
     }
 
     /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
+     * @inheritDoc
      */
-    public static function getDefaultCollectors(): array
+    public function registerGaugeCollector(GaugeCollectorInterface $collector): void
     {
-        return [
-            QueueCollector::class,
-        ];
+        $collector->register($this->registry);
+        $this->collectors[] = $collector;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerCollectors(array $collectors): void
+    {
+        foreach ($collectors as $collector) {
+            $collectorInstance = app($collector);
+
+            if ($collectorInstance instanceof GaugeCollectorInterface) {
+                $this->registerGaugeCollector($collectorInstance);
+            }
+        }
+    }
+
+    public function getMetricFamilySamples(): array
+    {
+        return $this->registry->getMetricFamilySamples();
     }
 }

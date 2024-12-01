@@ -4,9 +4,21 @@ declare(strict_types = 1);
 
 namespace Matusboa\LaravelExporter\Collector;
 
-use Matusboa\LaravelExporter\Contract\CollectorInterface;
+use Illuminate\Support\Facades\Queue;
+use Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface;
+use Prometheus\CollectorRegistry;
 
-final class QueueCollector implements CollectorInterface
+class QueueCollector implements GaugeCollectorInterface
 {
-
+    /**
+     * @inheritDoc
+     */
+    public function register(CollectorRegistry $registry): void
+    {
+        $registry->registerGauge(
+            'test',
+            'nevim',
+            'cotu',
+        )->set(Queue::size('index'));
+    }
 }

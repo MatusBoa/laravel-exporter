@@ -1,10 +1,18 @@
 <?php
 
-declare(strict_types = 1);
+use Matusboa\LaravelExporter\DefaultCollectors;
 
 return [
-    'redis_connection' => 'default',
-    'collectors' => [
-        ...\Matusboa\LaravelExporter\Registry\CollectorRegistry::getDefaultCollectors(),
+    /*
+     * Cache driver to use for storing metrics.
+     * All drivers supported by Laravel can be used.
+     */
+    'driver' => \env('EXPORTER_CACHE_DRIVER', \env('CACHE_DRIVER', 'file')),
+
+    /**
+     * List of queues to monitor.
+     */
+    'queues_to_monitor' => [
+        'default',
     ],
 ];
