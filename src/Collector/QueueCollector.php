@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Matusboa\LaravelExporter\Collector;
 
-use Illuminate\Support\Facades\Queue;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
@@ -20,13 +19,11 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
     public function __construct(
         protected readonly CollectorRegistryInterface $registry,
         protected readonly QueueMetricsStoreInterface $queueMetricsStore,
-    ) {
-    }
+    ) {}
 
     public function register(): void
     {
-        $this->registerQueueSizeGauges();
-
+        $this->registerJobQueuedGauges();
         $this->registerJobProcessingGauges();
         $this->registerJobProcessedGauges();
         $this->registerJobFailedGauges();
@@ -35,6 +32,19 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
     public function onRender(): void
     {
         $this->queueMetricsStore->clear();
+    }
+
+    protected function registerJobQueuedGauges(): void
+    {
+        $gauge = $this->registry->registerGauge(
+            'queue_job_queued',
+            'Number of queued jobs',
+            ['queue'],
+        );
+
+        foreach ($this->queueMetricsStore->getQueues(JobMetricTypeEnum::QUEUED) as $queue) {
+            $gauge->set($this->queueMetricsStore->getJobsCount($queue, JobMetricTypeEnum::QUEUED), [$queue]);
+        }
     }
 
     protected function registerJobProcessingGauges(): void
@@ -73,24 +83,6 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
 
         foreach ($this->queueMetricsStore->getQueues(JobMetricTypeEnum::FAILED) as $queue) {
             $gauge->set($this->queueMetricsStore->getJobsCount($queue, JobMetricTypeEnum::FAILED), [$queue]);
-        }
-    }
-
-    protected function registerQueueSizeGauges(): void
-    {
-        $queues = \array_map(
-            static fn (string | \BackedEnum $queue) => $queue instanceof \BackedEnum ? $queue->value : $queue,
-            \config('laravel_exporter.queues', []),
-        );
-
-        $gauge = $this->registry->registerGauge(
-            'queue_size',
-            'Number of jobs in the queue',
-            ['queue'],
-        );
-
-        foreach ($queues as $queue) {
-            $gauge->set(Queue::size($queue), [$queue]);
         }
     }
 }

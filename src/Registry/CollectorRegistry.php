@@ -6,6 +6,7 @@ namespace Matusboa\LaravelExporter\Registry;
 
 use Prometheus\Gauge;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Prometheus\RegistryInterface;
 use Illuminate\Contracts\Cache\Repository;
 use Matusboa\LaravelExporter\Adapter\StorageAdapter;
@@ -26,7 +27,7 @@ class CollectorRegistry implements CollectorRegistryInterface
     protected array $collectors = [];
 
     /**
-     * @var array<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>, \Matusboa\LaravelExporter\Contract\CollectorInterface>
+     * @var array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
      */
     protected array $onRenderCollectors = [];
 
@@ -72,7 +73,7 @@ class CollectorRegistry implements CollectorRegistryInterface
             $this->collectors[$collector] = $collectorInstance;
 
             if ($collectorInstance instanceof CollectorWithRenderCallbackInterface) {
-                $this->onRenderCollectors[$collector] = $collectorInstance;
+                $this->onRenderCollectors[] = $collector;
             }
         }
     }
@@ -108,7 +109,7 @@ class CollectorRegistry implements CollectorRegistryInterface
      */
     public function getCollectorsWithOnRenderCallback(): array
     {
-        return $this->onRenderCollectors;
+        return Arr::only($this->collectors, $this->onRenderCollectors);
     }
 
     /**

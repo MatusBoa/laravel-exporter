@@ -9,7 +9,7 @@ use Matusboa\LaravelExporter\Collector\QueueCollector;
 class DefaultCollectors
 {
     /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\Collector\CollectorInterface>>
+     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
      */
     public static function queueCollectors(): array
     {

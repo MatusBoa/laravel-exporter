@@ -23,7 +23,6 @@ class JobProcessedListener
      */
     public function handle(JobProcessed $event): void
     {
-        $this->queueMetricsStore->decrementJobsCount($event->job->getQueue(), JobMetricTypeEnum::PROCESSING);
         $this->queueMetricsStore->incrementJobsCount($event->job->getQueue(), JobMetricTypeEnum::PROCESSED);
     }
 }
