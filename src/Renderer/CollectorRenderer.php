@@ -6,6 +6,7 @@ namespace Matusboa\LaravelExporter\Renderer;
 
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRendererInterface;
+use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 use Prometheus\RenderTextFormat;
 
 final class CollectorRenderer implements CollectorRendererInterface
@@ -25,8 +26,22 @@ final class CollectorRenderer implements CollectorRendererInterface
     {
         $renderer = new RenderTextFormat();
 
-        return $renderer->render(
+        $output = $renderer->render(
             $this->collectorRegistry->getPrometheusRegistry()->getMetricFamilySamples(),
         );
+
+        foreach ($this->collectorRegistry->getCollectorsWithOnRenderCallback() as $collector) {
+            $collector->onRender();
+        }
+
+        return $output;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function mimeType(): string
+    {
+        return RenderTextFormat::MIME_TYPE;
     }
 }

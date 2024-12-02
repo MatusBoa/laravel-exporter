@@ -6,8 +6,5 @@ namespace Matusboa\LaravelExporter\Contract;
 
 interface CollectorInterface
 {
-    /**
-     * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $registry
-     */
-    public function register(CollectorRegistryInterface $registry): void;
+    public function register(): void;
 }

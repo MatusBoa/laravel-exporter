@@ -7,10 +7,9 @@ namespace Matusboa\LaravelExporter\Registry;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Str;
 use Matusboa\LaravelExporter\Adapter\StorageAdapter;
-use Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
-use Matusboa\LaravelExporter\Contract\MetricsRegistryInterface;
+use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 use Prometheus\Gauge;
 use Prometheus\RegistryInterface;
 
@@ -22,9 +21,14 @@ class CollectorRegistry implements CollectorRegistryInterface
     protected \Prometheus\CollectorRegistry $registry;
 
     /**
-     * @var array<array-key, \Prometheus\Collector>
+     * @var array<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>, \Matusboa\LaravelExporter\Contract\CollectorInterface>
      */
     protected array $collectors = [];
+
+    /**
+     * @var array<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>, \Matusboa\LaravelExporter\Contract\CollectorInterface>
+     */
+    protected array $onRenderCollectors = [];
 
     /**
      * @param \Illuminate\Contracts\Cache\Repository $repository
@@ -63,7 +67,13 @@ class CollectorRegistry implements CollectorRegistryInterface
                 );
             }
 
-            $collectorInstance->register($this);
+            $collectorInstance->register();
+
+            $this->collectors[$collector] = $collectorInstance;
+
+            if ($collectorInstance instanceof CollectorWithRenderCallbackInterface) {
+                $this->onRenderCollectors[$collector] = $collectorInstance;
+            }
         }
     }
 
@@ -82,8 +92,6 @@ class CollectorRegistry implements CollectorRegistryInterface
             $labels,
         );
 
-        $this->collectors[] = $gauge;
-
         return $gauge;
     }
 
@@ -93,6 +101,14 @@ class CollectorRegistry implements CollectorRegistryInterface
     public function getPrometheusRegistry(): RegistryInterface
     {
         return $this->registry;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCollectorsWithOnRenderCallback(): array
+    {
+        return $this->onRenderCollectors;
     }
 
     /**

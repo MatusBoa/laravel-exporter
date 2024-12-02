@@ -16,6 +16,11 @@ interface CollectorRegistryInterface
     public function getCollectors(): array;
 
     /**
+     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface&\Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface>>
+     */
+    public function getCollectorsWithOnRenderCallback(): array;
+
+    /**
      * @param array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>> $collectors
      */
     public function registerCollectorClasses(array $collectors): void;
