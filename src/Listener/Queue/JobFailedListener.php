@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Listener\Queue;
 
-use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobFailed;
 use Matusboa\LaravelExporter\Collector\QueueCollector;
 use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
@@ -22,7 +22,7 @@ final class JobFailedListener
     /**
      * @param \Illuminate\Queue\Events\JobProcessed $event
      */
-    public function handle(JobProcessed $event): void
+    public function handle(JobFailed $event): void
     {
         $this->queueMetricsStore->decrementJobsCount($event->job->getQueue(), JobMetricTypeEnum::PROCESSING);
         $this->queueMetricsStore->incrementJobsCount($event->job->getQueue(), JobMetricTypeEnum::FAILED);
