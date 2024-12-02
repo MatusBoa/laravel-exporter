@@ -28,6 +28,5 @@ final class CollectorRenderer implements CollectorRendererInterface
         return $renderer->render(
             $this->collectorRegistry->getPrometheusRegistry()->getMetricFamilySamples(),
         );
-
     }
 }
