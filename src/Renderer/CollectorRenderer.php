@@ -26,7 +26,7 @@ final class CollectorRenderer implements CollectorRendererInterface
         $renderer = new RenderTextFormat();
 
         return $renderer->render(
-            $this->collectorRegistry->getMetricFamilySamples(),
+            $this->collectorRegistry->getPrometheusRegistry()->getMetricFamilySamples(),
         );
 
     }

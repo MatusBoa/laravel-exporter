@@ -5,21 +5,36 @@ declare(strict_types = 1);
 namespace Matusboa\LaravelExporter\Contract;
 
 use Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface;
+use Prometheus\Gauge;
+use Prometheus\RegistryInterface;
 
 interface CollectorRegistryInterface
 {
     /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\Collector\CollectorInterface>>
+     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
      */
     public function getCollectors(): array;
 
     /**
-     * @param \Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface $collector
+     * @param array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>> $collectors
      */
-    public function registerGaugeCollector(GaugeCollectorInterface $collector): void;
+    public function registerCollectorClasses(array $collectors): void;
 
     /**
-     * @param array<array-key, class-string<\Matusboa\LaravelExporter\Contract\Collector\CollectorInterface>> $collectors
+     * @param non-empty-string $name
+     * @param non-empty-string $helpText
+     * @param array<array-key, non-empty-string> $labels
+     *
+     * @return \Prometheus\Gauge
      */
-    public function registerCollectors(array $collectors): void;
+    public function registerGauge(
+        string $name,
+        string $helpText,
+        array $labels = [],
+    ): Gauge;
+
+    /**
+     * @return \Prometheus\RegistryInterface
+     */
+    public function getPrometheusRegistry(): RegistryInterface;
 }

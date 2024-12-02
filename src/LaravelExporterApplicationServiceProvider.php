@@ -11,7 +11,7 @@ class LaravelExporterApplicationServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        app(CollectorRegistryInterface::class)->registerCollectors(
+        app(CollectorRegistryInterface::class)->registerCollectorClasses(
             $this->collectors(),
         );
     }

@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace Matusboa\LaravelExporter\Registry;
 
 use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Str;
 use Matusboa\LaravelExporter\Adapter\StorageAdapter;
 use Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface;
+use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
+use Matusboa\LaravelExporter\Contract\MetricsRegistryInterface;
+use Prometheus\Gauge;
+use Prometheus\RegistryInterface;
 
 class CollectorRegistry implements CollectorRegistryInterface
 {
@@ -17,7 +22,7 @@ class CollectorRegistry implements CollectorRegistryInterface
     protected \Prometheus\CollectorRegistry $registry;
 
     /**
-     * @var array<array-key, class-string<\Matusboa\LaravelExporter\Contract\Collector\CollectorInterface>>
+     * @var array<array-key, \Prometheus\Collector>
      */
     protected array $collectors = [];
 
@@ -43,28 +48,70 @@ class CollectorRegistry implements CollectorRegistryInterface
     /**
      * @inheritDoc
      */
-    public function registerGaugeCollector(GaugeCollectorInterface $collector): void
+    public function registerCollectorClasses(array $collectors): void
     {
-        $collector->register($this->registry);
-        $this->collectors[] = $collector;
+        foreach ($collectors as $collector) {
+            $collectorInstance = app($collector);
+
+            if (! $collectorInstance instanceof CollectorInterface) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Collector %s must implement %s',
+                        $collector,
+                        CollectorInterface::class,
+                    ),
+                );
+            }
+
+            $collectorInstance->register($this);
+        }
     }
 
     /**
      * @inheritDoc
      */
-    public function registerCollectors(array $collectors): void
-    {
-        foreach ($collectors as $collector) {
-            $collectorInstance = app($collector);
+    public function registerGauge(
+        string $name,
+        string $helpText,
+        array $labels = [],
+    ): Gauge {
+        $gauge = $this->registry->getOrRegisterGauge(
+            $this->getNamespace(),
+            $this->getPrefixedName($name),
+            $helpText,
+            $labels,
+        );
 
-            if ($collectorInstance instanceof GaugeCollectorInterface) {
-                $this->registerGaugeCollector($collectorInstance);
-            }
-        }
+        $this->collectors[] = $gauge;
+
+        return $gauge;
     }
 
-    public function getMetricFamilySamples(): array
+    /**
+     * @inheritDoc
+     */
+    public function getPrometheusRegistry(): RegistryInterface
     {
-        return $this->registry->getMetricFamilySamples();
+        return $this->registry;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function getPrefixedName(string $name): string
+    {
+        return 'laravel_exporter_' . $name;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNamespace(): string
+    {
+        return Str::of(config('laravel_exporter.default_namespace'))
+            ->slug('_')
+            ->lower()
+            ->toString();
     }
 }

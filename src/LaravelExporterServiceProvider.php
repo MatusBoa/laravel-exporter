@@ -6,7 +6,6 @@ namespace Matusboa\LaravelExporter;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Matusboa\LaravelExporter\Contract\CollectorRendererInterface;
 use Matusboa\LaravelExporter\Registry\CollectorRegistry;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
@@ -23,21 +22,18 @@ class LaravelExporterServiceProvider extends ServiceProvider
             CollectorRegistryInterface::class,
             static fn(Application $app): CollectorRegistryInterface => new CollectorRegistry(
                 $app['cache']->store(
-                    $app['config']->get('prometheus_exporter.driver', null),
+                    $app['config']->get('laravel_exporter.driver', null),
                 ),
             ),
         );
 
-        $this->app->bind(
-            CollectorRendererInterface::class,
-            CollectorRenderer::class,
-        );
+        $this->app->bind(CollectorRendererInterface::class, CollectorRenderer::class);
     }
 
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/../config/prometheus_exporter.php' => $this->app->configPath('prometheus_exporter.php'),
+            __DIR__ . '/../config/laravel_exporter.php' => $this->app->configPath('laravel_exporter.php'),
         ], 'laravel-exporter-config');
     }
 }
