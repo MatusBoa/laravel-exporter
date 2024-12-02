@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Matusboa\LaravelExporter\Enum;
 
 enum JobMetricTypeEnum: string

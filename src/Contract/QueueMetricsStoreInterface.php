@@ -8,7 +8,6 @@ use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 
 interface QueueMetricsStoreInterface
 {
-
     /**
      * @param string $queue
      * @param \Matusboa\LaravelExporter\Enum\JobMetricTypeEnum $type

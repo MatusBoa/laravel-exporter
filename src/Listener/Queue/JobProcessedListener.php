@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace Matusboa\LaravelExporter\Listener\Queue;
 
 use Illuminate\Queue\Events\JobProcessed;
-use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
+use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
 
-final class JobProcessedListener
+class JobProcessedListener
 {
-
     /**
      * @param \Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface $queueMetricsStore
      */
     public function __construct(
-        private readonly QueueMetricsStoreInterface $queueMetricsStore,
+        protected readonly QueueMetricsStoreInterface $queueMetricsStore,
     ) {
     }
 

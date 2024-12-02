@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Renderer;
 
+use Prometheus\RenderTextFormat;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRendererInterface;
-use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
-use Prometheus\RenderTextFormat;
 
-final class CollectorRenderer implements CollectorRendererInterface
+class CollectorRenderer implements CollectorRendererInterface
 {
     /**
      * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $collectorRegistry
      */
     public function __construct(
-        private readonly CollectorRegistryInterface $collectorRegistry,
+        protected readonly CollectorRegistryInterface $collectorRegistry,
     ) {
     }
 

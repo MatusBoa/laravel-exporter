@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Registry;
 
-use Illuminate\Contracts\Cache\Repository;
+use Prometheus\Gauge;
 use Illuminate\Support\Str;
+use Prometheus\RegistryInterface;
+use Illuminate\Contracts\Cache\Repository;
 use Matusboa\LaravelExporter\Adapter\StorageAdapter;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
-use Prometheus\Gauge;
-use Prometheus\RegistryInterface;
 
 class CollectorRegistry implements CollectorRegistryInterface
 {
@@ -55,11 +55,11 @@ class CollectorRegistry implements CollectorRegistryInterface
     public function registerCollectorClasses(array $collectors): void
     {
         foreach ($collectors as $collector) {
-            $collectorInstance = app($collector);
+            $collectorInstance = \app($collector);
 
             if (! $collectorInstance instanceof CollectorInterface) {
                 throw new \InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         'Collector %s must implement %s',
                         $collector,
                         CollectorInterface::class,
@@ -113,6 +113,7 @@ class CollectorRegistry implements CollectorRegistryInterface
 
     /**
      * @param string $name
+     *
      * @return string
      */
     protected function getPrefixedName(string $name): string
@@ -125,7 +126,7 @@ class CollectorRegistry implements CollectorRegistryInterface
      */
     protected function getNamespace(): string
     {
-        return Str::of(config('laravel_exporter.default_namespace'))
+        return Str::of(\config('laravel_exporter.default_namespace'))
             ->slug('_')
             ->lower()
             ->toString();

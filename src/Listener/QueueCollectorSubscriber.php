@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Listener;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Contracts\Events\Dispatcher;
 use Matusboa\LaravelExporter\Listener\Queue\JobFailedListener;
 use Matusboa\LaravelExporter\Listener\Queue\JobProcessedListener;
 use Matusboa\LaravelExporter\Listener\Queue\JobProcessingListener;
 
-final class QueueCollectorSubscriber
+class QueueCollectorSubscriber
 {
     /**
      * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher

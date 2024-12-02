@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Contract;
 
-use Matusboa\LaravelExporter\Contract\Collector\GaugeCollectorInterface;
 use Prometheus\Gauge;
 use Prometheus\RegistryInterface;
 

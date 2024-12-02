@@ -1,6 +1,7 @@
 <?php
 
-use Matusboa\LaravelExporter\DefaultCollectors;
+declare(strict_types=1);
+
 
 return [
     /*

@@ -30,7 +30,7 @@ class StorageAdapter extends InMemory
      * @param \Illuminate\Contracts\Cache\Repository $repository
      */
     public function __construct(
-        private readonly Repository $repository,
+        protected readonly Repository $repository,
     ) {
     }
 
@@ -109,6 +109,19 @@ class StorageAdapter extends InMemory
     /**
      * @inheritDoc
      */
+    public function wipeStorage(): void
+    {
+        $this->repository->deleteMultiple(\array_map(
+            $this->getCacheKey(...),
+            $this->types,
+        ));
+
+        parent::wipeStorage();
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function collectSummaries(): array
     {
         $this->summaries = $this->repository->get(
@@ -130,19 +143,6 @@ class StorageAdapter extends InMemory
         );
 
         return parent::collectHistograms();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function wipeStorage(): void
-    {
-        $this->repository->deleteMultiple(\array_map(
-            $this->getCacheKey(...),
-            $this->types,
-        ));
-
-        parent::wipeStorage();
     }
 
     /**

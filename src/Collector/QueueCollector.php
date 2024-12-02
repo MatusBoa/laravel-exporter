@@ -1,33 +1,28 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Collector;
 
 use Illuminate\Support\Facades\Queue;
+use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
-use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
-use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
-use Prometheus\Gauge;
+use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 
 class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackInterface
 {
-
     /**
      * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $registry
      * @param \Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface $queueMetricsStore
      */
     public function __construct(
-        private readonly CollectorRegistryInterface $registry,
-        private readonly QueueMetricsStoreInterface $queueMetricsStore,
+        protected readonly CollectorRegistryInterface $registry,
+        protected readonly QueueMetricsStoreInterface $queueMetricsStore,
     ) {
     }
 
-    /**
-     * @return void
-     */
     public function register(): void
     {
         $this->registerQueueSizeGauges();
@@ -37,9 +32,11 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
         $this->registerJobFailedGauges();
     }
 
-    /**
-     * @return void
-     */
+    public function onRender(): void
+    {
+        $this->queueMetricsStore->clear();
+    }
+
     protected function registerJobProcessingGauges(): void
     {
         $gauge = $this->registry->registerGauge(
@@ -53,9 +50,6 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
         }
     }
 
-    /**
-     * @return void
-     */
     protected function registerJobProcessedGauges(): void
     {
         $gauge = $this->registry->registerGauge(
@@ -69,9 +63,6 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
         }
     }
 
-    /**
-     * @return void
-     */
     protected function registerJobFailedGauges(): void
     {
         $gauge = $this->registry->registerGauge(
@@ -85,14 +76,11 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
         }
     }
 
-    /**
-     * @return void
-     */
     protected function registerQueueSizeGauges(): void
     {
         $queues = \array_map(
-            static fn (string|\BackedEnum $queue) => $queue instanceof \BackedEnum ? $queue->value : $queue,
-            config('laravel_exporter.queues', []),
+            static fn (string | \BackedEnum $queue) => $queue instanceof \BackedEnum ? $queue->value : $queue,
+            \config('laravel_exporter.queues', []),
         );
 
         $gauge = $this->registry->registerGauge(
@@ -104,13 +92,5 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
         foreach ($queues as $queue) {
             $gauge->set(Queue::size($queue), [$queue]);
         }
-    }
-
-    /**
-     * @return void
-     */
-    public function onRender(): void
-    {
-        $this->queueMetricsStore->clear();
     }
 }

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Matusboa\LaravelExporter\Store;
 
 use Illuminate\Contracts\Cache\Repository;
-use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
+use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
 
-final class QueueMetricsStore implements QueueMetricsStoreInterface
+class QueueMetricsStore implements QueueMetricsStoreInterface
 {
     protected const string CACHE_PREFIX = 'LARAVEL_EXPORTER';
     protected const string CACHE_SUFFIX = 'QUEUE_METRICS_STORE';
@@ -19,7 +19,7 @@ final class QueueMetricsStore implements QueueMetricsStoreInterface
      * @param \Illuminate\Contracts\Cache\Repository $repository
      */
     public function __construct(
-        private readonly Repository $repository,
+        protected readonly Repository $repository,
     ) {
     }
 
@@ -41,7 +41,7 @@ final class QueueMetricsStore implements QueueMetricsStoreInterface
     {
         $this->repository->put(
             $this->getCacheKey($queue, $type),
-            max(0, $count),
+            \max(0, $count),
         );
 
         $this->storeQueue($queue, $type);
@@ -123,7 +123,7 @@ final class QueueMetricsStore implements QueueMetricsStoreInterface
      */
     protected function getCacheKey(string $key, JobMetricTypeEnum $type): string
     {
-        return \join('_', \array_filter([
+        return \implode('_', \array_filter([
             self::CACHE_PREFIX,
             $key,
             $type->value,
