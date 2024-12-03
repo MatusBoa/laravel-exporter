@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Matusboa\LaravelExporter\Registry;
 
 use Prometheus\Gauge;
-use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Prometheus\RegistryInterface;
 use Illuminate\Contracts\Cache\Repository;
 use Matusboa\LaravelExporter\Adapter\StorageAdapter;
@@ -17,9 +17,9 @@ use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 class CollectorRegistry implements CollectorRegistryInterface
 {
     /**
-     * @var \Prometheus\CollectorRegistry
+     * @var null|\Prometheus\CollectorRegistry
      */
-    protected \Prometheus\CollectorRegistry $registry;
+    protected ?\Prometheus\CollectorRegistry $registry = null;
 
     /**
      * @var array<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>, \Matusboa\LaravelExporter\Contract\CollectorInterface>
@@ -35,11 +35,8 @@ class CollectorRegistry implements CollectorRegistryInterface
      * @param \Illuminate\Contracts\Cache\Repository $repository
      */
     public function __construct(
-        Repository $repository,
+        protected Repository $repository,
     ) {
-        $this->registry = new \Prometheus\CollectorRegistry(
-            new StorageAdapter($repository),
-        );
     }
 
     /**
@@ -67,8 +64,6 @@ class CollectorRegistry implements CollectorRegistryInterface
                     ),
                 );
             }
-
-            $collectorInstance->register();
 
             $this->collectors[$collector] = $collectorInstance;
 
@@ -101,7 +96,9 @@ class CollectorRegistry implements CollectorRegistryInterface
      */
     public function getPrometheusRegistry(): RegistryInterface
     {
-        return $this->registry;
+        return $this->registry ??= new \Prometheus\CollectorRegistry(
+            new StorageAdapter($this->repository),
+        );
     }
 
     /**

@@ -14,7 +14,7 @@ class JobProcessingListener
      * @param \Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface $queueMetricsStore
      */
     public function __construct(
-        protected readonly QueueMetricsStoreInterface $queueMetricsStore,
+        protected QueueMetricsStoreInterface $queueMetricsStore,
     ) {
     }
 

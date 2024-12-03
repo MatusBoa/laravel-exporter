@@ -14,7 +14,7 @@ class CollectorRenderer implements CollectorRendererInterface
      * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $collectorRegistry
      */
     public function __construct(
-        protected readonly CollectorRegistryInterface $collectorRegistry,
+        protected CollectorRegistryInterface $collectorRegistry,
     ) {
     }
 
@@ -23,9 +23,11 @@ class CollectorRenderer implements CollectorRendererInterface
      */
     public function render(): string
     {
-        $renderer = new RenderTextFormat();
+        foreach ($this->collectorRegistry->getCollectors() as $collector) {
+            $collector->register();
+        }
 
-        $output = $renderer->render(
+        $output = (new RenderTextFormat())->render(
             $this->collectorRegistry->getPrometheusRegistry()->getMetricFamilySamples(),
         );
 

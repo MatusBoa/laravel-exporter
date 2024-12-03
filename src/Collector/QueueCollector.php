@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Collector;
 
@@ -17,9 +17,10 @@ class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackI
      * @param \Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface $queueMetricsStore
      */
     public function __construct(
-        protected readonly CollectorRegistryInterface $registry,
-        protected readonly QueueMetricsStoreInterface $queueMetricsStore,
-    ) {}
+        protected CollectorRegistryInterface $registry,
+        protected QueueMetricsStoreInterface $queueMetricsStore,
+    ) {
+    }
 
     public function register(): void
     {

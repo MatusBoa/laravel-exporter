@@ -10,7 +10,7 @@ use Prometheus\RegistryInterface;
 interface CollectorRegistryInterface
 {
     /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
+     * @return array<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>, \Matusboa\LaravelExporter\Contract\CollectorInterface>
      */
     public function getCollectors(): array;
 

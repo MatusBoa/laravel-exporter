@@ -30,7 +30,7 @@ class StorageAdapter extends InMemory
      * @param \Illuminate\Contracts\Cache\Repository $repository
      */
     public function __construct(
-        protected readonly Repository $repository,
+        protected Repository $repository,
     ) {
     }
 

@@ -19,7 +19,7 @@ class QueueMetricsStore implements QueueMetricsStoreInterface
      * @param \Illuminate\Contracts\Cache\Repository $repository
      */
     public function __construct(
-        protected readonly Repository $repository,
+        protected Repository $repository,
     ) {
     }
 
