@@ -23,6 +23,10 @@ class JobQueuedListener
      */
     public function handle(JobQueued $event): void
     {
-        $this->queueMetricsStore->incrementJobsCount($event->job->getQueue(), JobMetricTypeEnum::QUEUED);
+        if ($event->queue === null) {
+            return;
+        }
+
+        $this->queueMetricsStore->incrementJobsCount($event->queue, JobMetricTypeEnum::QUEUED);
     }
 }
