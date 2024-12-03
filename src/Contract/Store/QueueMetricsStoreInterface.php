@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Matusboa\LaravelExporter\Contract;
+namespace Matusboa\LaravelExporter\Contract\Store;
 
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 

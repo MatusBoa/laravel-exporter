@@ -6,12 +6,12 @@ namespace Matusboa\LaravelExporter\Listener\Queue;
 
 use Illuminate\Queue\Events\JobFailed;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
-use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
 
 class JobFailedListener
 {
     /**
-     * @param \Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface $queueMetricsStore
+     * @param \Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface $queueMetricsStore
      */
     public function __construct(
         protected QueueMetricsStoreInterface $queueMetricsStore

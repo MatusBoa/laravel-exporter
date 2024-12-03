@@ -6,7 +6,7 @@ namespace Matusboa\LaravelExporter\Store;
 
 use Illuminate\Contracts\Cache\Repository;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
-use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
 
 class QueueMetricsStore implements QueueMetricsStoreInterface
 {

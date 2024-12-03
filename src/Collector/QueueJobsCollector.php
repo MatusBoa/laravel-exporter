@@ -7,14 +7,14 @@ namespace Matusboa\LaravelExporter\Collector;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
-use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
 use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 
-class QueueCollector implements CollectorInterface, CollectorWithRenderCallbackInterface
+class QueueJobsCollector implements CollectorInterface, CollectorWithRenderCallbackInterface
 {
     /**
      * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $registry
-     * @param \Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface $queueMetricsStore
+     * @param \Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface $queueMetricsStore
      */
     public function __construct(
         protected CollectorRegistryInterface $registry,

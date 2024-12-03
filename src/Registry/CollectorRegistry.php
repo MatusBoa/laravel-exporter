@@ -81,14 +81,12 @@ class CollectorRegistry implements CollectorRegistryInterface
         string $helpText,
         array $labels = [],
     ): Gauge {
-        $gauge = $this->registry->getOrRegisterGauge(
+        return $this->getPrometheusRegistry()->getOrRegisterGauge(
             $this->getNamespace(),
             $this->getPrefixedName($name),
             $helpText,
             $labels,
         );
-
-        return $gauge;
     }
 
     /**

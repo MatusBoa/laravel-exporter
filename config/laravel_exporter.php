@@ -14,11 +14,4 @@ return [
      * Default namespace to use for metrics.
      */
     'namespace' => \env('EXPORTER_NAMESPACE', \Illuminate\Support\Str::slug((string) \env('APP_NAME', 'laravel'), '_')),
-
-    /**
-     * List of queues to monitor.
-     */
-    'queues' => [
-        'default',
-    ],
 ];

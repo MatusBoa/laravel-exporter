@@ -7,13 +7,15 @@ namespace Matusboa\LaravelExporter;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Matusboa\LaravelExporter\Store\MailMetricsStore;
 use Matusboa\LaravelExporter\Store\QueueMetricsStore;
 use Matusboa\LaravelExporter\Registry\CollectorRegistry;
 use Matusboa\LaravelExporter\Renderer\CollectorRenderer;
 use Matusboa\LaravelExporter\Listener\QueueCollectorSubscriber;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRendererInterface;
-use Matusboa\LaravelExporter\Contract\QueueMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\MailsMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
 
 class LaravelExporterServiceProvider extends ServiceProvider
 {
@@ -36,6 +38,15 @@ class LaravelExporterServiceProvider extends ServiceProvider
         $this->app->bind(
             QueueMetricsStoreInterface::class,
             static fn (Application $app): QueueMetricsStoreInterface => new QueueMetricsStore(
+                $app['cache']->store(
+                    $app['config']->get('laravel_exporter.driver', null),
+                ),
+            ),
+        );
+
+        $this->app->bind(
+            MailsMetricsStoreInterface::class,
+            static fn (Application $app): MailsMetricsStoreInterface => new MailMetricsStore(
                 $app['cache']->store(
                     $app['config']->get('laravel_exporter.driver', null),
                 ),
