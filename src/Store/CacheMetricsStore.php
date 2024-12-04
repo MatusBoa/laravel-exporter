@@ -66,7 +66,6 @@ final class CacheMetricsStore implements CacheMetricsStoreInterface
         return \implode('_', \array_filter([
             self::CACHE_PREFIX,
             $key,
-            $type->value,
             self::CACHE_SUFFIX,
         ]));
     }
