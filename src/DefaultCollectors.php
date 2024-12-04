@@ -4,39 +4,23 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter;
 
+use Matusboa\LaravelExporter\Collector\InfoCollector;
+use Matusboa\LaravelExporter\Collector\CacheCollector;
 use Matusboa\LaravelExporter\Collector\MailsCollector;
 use Matusboa\LaravelExporter\Collector\QueueJobsCollector;
 
 class DefaultCollectors
 {
     /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
+     * @return list<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
      */
     public static function all(): array
     {
         return [
-            ...self::queueCollectors(),
-            ...self::mailCollectors(),
-        ];
-    }
-
-    /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
-     */
-    public static function queueCollectors(): array
-    {
-        return [
+            InfoCollector::class,
             QueueJobsCollector::class,
-        ];
-    }
-
-    /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
-     */
-    public static function mailCollectors(): array
-    {
-        return [
             MailsCollector::class,
+            CacheCollector::class,
         ];
     }
 }

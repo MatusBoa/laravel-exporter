@@ -11,13 +11,13 @@ class LaravelExporterApplicationServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        \app(CollectorRegistryInterface::class)->registerCollectorClasses(
+        $this->app->make(CollectorRegistryInterface::class)->registerCollectorClasses(
             $this->collectors(),
         );
     }
 
     /**
-     * @return array<array-key, class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
+     * @return list<class-string<\Matusboa\LaravelExporter\Contract\CollectorInterface>>
      */
     public function collectors(): array
     {

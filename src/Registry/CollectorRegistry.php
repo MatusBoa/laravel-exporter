@@ -8,10 +8,12 @@ use Prometheus\Gauge;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Prometheus\RegistryInterface;
-use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Container\Container;
 use Matusboa\LaravelExporter\Adapter\StorageAdapter;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
+use Matusboa\LaravelExporter\Contract\BootstrapableCollectorInterface;
+use Matusboa\LaravelExporter\Contract\Store\GenericMetricsStoreInterface;
 use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 
 class CollectorRegistry implements CollectorRegistryInterface
@@ -32,10 +34,10 @@ class CollectorRegistry implements CollectorRegistryInterface
     protected array $onRenderCollectors = [];
 
     /**
-     * @param \Illuminate\Contracts\Cache\Repository $repository
+     * @param \Matusboa\LaravelExporter\Contract\Store\GenericMetricsStoreInterface $genericMetricsStore
      */
     public function __construct(
-        protected Repository $repository,
+        protected GenericMetricsStoreInterface $genericMetricsStore,
     ) {
     }
 
@@ -53,7 +55,7 @@ class CollectorRegistry implements CollectorRegistryInterface
     public function registerCollectorClasses(array $collectors): void
     {
         foreach ($collectors as $collector) {
-            $collectorInstance = \app($collector);
+            $collectorInstance = Container::getInstance()->make($collector);
 
             if (! $collectorInstance instanceof CollectorInterface) {
                 throw new \InvalidArgumentException(
@@ -69,6 +71,10 @@ class CollectorRegistry implements CollectorRegistryInterface
 
             if ($collectorInstance instanceof CollectorWithRenderCallbackInterface) {
                 $this->onRenderCollectors[] = $collector;
+            }
+
+            if ($collectorInstance instanceof BootstrapableCollectorInterface) {
+                $collectorInstance->bootstrap();
             }
         }
     }
@@ -95,7 +101,7 @@ class CollectorRegistry implements CollectorRegistryInterface
     public function getPrometheusRegistry(): RegistryInterface
     {
         return $this->registry ??= new \Prometheus\CollectorRegistry(
-            new StorageAdapter($this->repository),
+            new StorageAdapter($this->genericMetricsStore->getRepository()),
         );
     }
 

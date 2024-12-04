@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Store;
 
-use Illuminate\Contracts\Cache\Repository;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\GenericMetricsStoreInterface;
 
 class QueueMetricsStore implements QueueMetricsStoreInterface
 {
@@ -16,10 +16,10 @@ class QueueMetricsStore implements QueueMetricsStoreInterface
     protected const string CACHE_QUEUES = 'queues';
 
     /**
-     * @param \Illuminate\Contracts\Cache\Repository $repository
+     * @param \Matusboa\LaravelExporter\Contract\Store\GenericMetricsStoreInterface $genericMetricsStore
      */
     public function __construct(
-        protected Repository $repository,
+        protected GenericMetricsStoreInterface $genericMetricsStore,
     ) {
     }
 
@@ -28,7 +28,7 @@ class QueueMetricsStore implements QueueMetricsStoreInterface
      */
     public function getJobsCount(string $queue, JobMetricTypeEnum $type): int
     {
-        return (int) $this->repository->get(
+        return (int) $this->genericMetricsStore->getRepository()->get(
             $this->getCacheKey($queue, $type),
             0,
         );
@@ -39,7 +39,7 @@ class QueueMetricsStore implements QueueMetricsStoreInterface
      */
     public function setJobsCount(string $queue, JobMetricTypeEnum $type, int $count): void
     {
-        $this->repository->put(
+        $this->genericMetricsStore->getRepository()->put(
             $this->getCacheKey($queue, $type),
             \max(0, $count),
         );
@@ -80,7 +80,7 @@ class QueueMetricsStore implements QueueMetricsStoreInterface
      */
     public function getQueues(JobMetricTypeEnum $type): array
     {
-        return $this->repository->get(
+        return $this->genericMetricsStore->getRepository()->get(
             $this->getCacheKey(self::CACHE_QUEUES, $type),
             [],
         );
@@ -103,10 +103,10 @@ class QueueMetricsStore implements QueueMetricsStoreInterface
      */
     protected function storeQueue(string $queue, JobMetricTypeEnum $type): void
     {
-        $this->repository->put(
+        $this->genericMetricsStore->getRepository()->put(
             $this->getCacheKey(self::CACHE_QUEUES, $type),
             \array_unique([
-                ...$this->repository->get(
+                ...$this->genericMetricsStore->getRepository()->get(
                     $this->getCacheKey(self::CACHE_QUEUES, $type),
                     [],
                 ),

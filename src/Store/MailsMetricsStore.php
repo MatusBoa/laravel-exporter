@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Store;
 
-use Illuminate\Contracts\Cache\Repository;
 use Matusboa\LaravelExporter\Contract\Store\MailsMetricsStoreInterface;
+use Matusboa\LaravelExporter\Contract\Store\GenericMetricsStoreInterface;
 
-class MailMetricsStore implements MailsMetricsStoreInterface
+class MailsMetricsStore implements MailsMetricsStoreInterface
 {
     protected const string CACHE_PREFIX = 'LARAVEL_EXPORTER';
     protected const string CACHE_SUFFIX = 'MAILS_METRICS_STORE';
 
     /**
-     * @param \Illuminate\Contracts\Cache\Repository $repository
+     * @param \Matusboa\LaravelExporter\Contract\Store\GenericMetricsStoreInterface $genericMetricsStore
      */
     public function __construct(
-        protected Repository $repository,
+        protected GenericMetricsStoreInterface $genericMetricsStore,
     ) {
     }
 
     public function incrementSending(): void
     {
-        $this->repository->increment(
+        $this->genericMetricsStore->getRepository()->increment(
             $this->getCacheKey('sending'),
         );
     }
@@ -34,7 +34,7 @@ class MailMetricsStore implements MailsMetricsStoreInterface
      */
     public function getSendingCount(): int
     {
-        return (int) $this->repository->get(
+        return (int) $this->genericMetricsStore->getRepository()->get(
             $this->getCacheKey('sending'),
             0
         );
@@ -42,7 +42,7 @@ class MailMetricsStore implements MailsMetricsStoreInterface
 
     public function incrementSent(): void
     {
-        $this->repository->increment(
+        $this->genericMetricsStore->getRepository()->increment(
             $this->getCacheKey('sent'),
         );
     }
@@ -54,7 +54,7 @@ class MailMetricsStore implements MailsMetricsStoreInterface
      */
     public function getSentCount(): int
     {
-        return (int) $this->repository->get(
+        return (int) $this->genericMetricsStore->getRepository()->get(
             $this->getCacheKey('sent'),
             0
         );
@@ -62,7 +62,7 @@ class MailMetricsStore implements MailsMetricsStoreInterface
 
     public function clear(): void
     {
-        $this->repository->deleteMultiple([
+        $this->genericMetricsStore->getRepository()->deleteMultiple([
             $this->getCacheKey('sending'),
             $this->getCacheKey('sent'),
         ]);

@@ -15,6 +15,7 @@
     "require": {
         "php": "^8.3",
         "illuminate/mail": "^10.0|^11.0",
+        "illuminate/cache": "^10.0|^11.0",
         "illuminate/queue": "^10.0|^11.0",
         "illuminate/support": "^10.0|^11.0",
         "promphp/prometheus_client_php": "^2.12"

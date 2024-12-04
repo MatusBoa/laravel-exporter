@@ -4,13 +4,24 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Collector;
 
+use Illuminate\Container\Container;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobQueued;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Contracts\Events\Dispatcher;
 use Matusboa\LaravelExporter\Enum\JobMetricTypeEnum;
 use Matusboa\LaravelExporter\Contract\CollectorInterface;
+use Matusboa\LaravelExporter\Listener\Queue\JobFailedListener;
+use Matusboa\LaravelExporter\Listener\Queue\JobQueuedListener;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
+use Matusboa\LaravelExporter\Listener\Queue\JobProcessedListener;
+use Matusboa\LaravelExporter\Listener\Queue\JobProcessingListener;
+use Matusboa\LaravelExporter\Contract\BootstrapableCollectorInterface;
 use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
 use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 
-class QueueJobsCollector implements CollectorInterface, CollectorWithRenderCallbackInterface
+class QueueJobsCollector implements CollectorInterface, CollectorWithRenderCallbackInterface, BootstrapableCollectorInterface
 {
     /**
      * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $registry
@@ -28,6 +39,30 @@ class QueueJobsCollector implements CollectorInterface, CollectorWithRenderCallb
         $this->registerJobProcessingGauges();
         $this->registerJobProcessedGauges();
         $this->registerJobFailedGauges();
+    }
+
+    public function bootstrap(): void
+    {
+        Container::getInstance()->afterResolving(
+            Dispatcher::class,
+            static function (Dispatcher $dispatcher): void {
+                $dispatcher->listen(JobQueued::class, [
+                    JobQueuedListener::class, 'handle',
+                ]);
+
+                $dispatcher->listen(JobProcessing::class, [
+                    JobProcessingListener::class, 'handle',
+                ]);
+
+                $dispatcher->listen(JobProcessed::class, [
+                    JobProcessedListener::class, 'handle',
+                ]);
+
+                $dispatcher->listen(JobFailed::class, [
+                    JobFailedListener::class, 'handle',
+                ]);
+            }
+        );
     }
 
     public function onRender(): void
