@@ -32,7 +32,7 @@ final class CacheMetricsStore implements CacheMetricsStoreInterface
         );
     }
 
-    public function incrementMisses(): void
+    public function incrementMissed(): void
     {
         $this->genericMetricsStore->getRepository()->increment(
             $this->getCacheKey('misses'),

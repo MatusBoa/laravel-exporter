@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Listener\Cache;
 
-use Illuminate\Cache\Events\CacheMissed;
+use Matusboa\LaravelExporter\Contract\Store\CacheMetricsStoreInterface;
 
 final class CacheMissedListener
 {
-    public function handle(CacheMissed $event): void
-    {
+    /**
+     * @param \Matusboa\LaravelExporter\Contract\Store\CacheMetricsStoreInterface $cacheMetricsStore
+     */
+    public function __construct(
+        protected CacheMetricsStoreInterface $cacheMetricsStore,
+    ) {
+    }
 
+    public function handle(): void
+    {
+        $this->cacheMetricsStore->incrementMissed();
     }
 }

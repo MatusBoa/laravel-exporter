@@ -10,7 +10,7 @@ interface CacheMetricsStoreInterface
 
     public function getHitsCount(): int;
 
-    public function incrementMisses(): void;
+    public function incrementMissed(): void;
 
     public function getMissesCount(): int;
 
