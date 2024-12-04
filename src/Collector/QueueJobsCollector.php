@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Matusboa\LaravelExporter\Collector;
 
-use Illuminate\Container\Container;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Queue\Events\JobProcessed;
@@ -17,12 +16,15 @@ use Matusboa\LaravelExporter\Listener\Queue\JobQueuedListener;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 use Matusboa\LaravelExporter\Listener\Queue\JobProcessedListener;
 use Matusboa\LaravelExporter\Listener\Queue\JobProcessingListener;
+use Matusboa\LaravelExporter\Concern\ConfiguresAfterResolvingTrait;
 use Matusboa\LaravelExporter\Contract\BootstrapableCollectorInterface;
 use Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface;
 use Matusboa\LaravelExporter\Contract\CollectorWithRenderCallbackInterface;
 
 class QueueJobsCollector implements CollectorInterface, CollectorWithRenderCallbackInterface, BootstrapableCollectorInterface
 {
+    use ConfiguresAfterResolvingTrait;
+
     /**
      * @param \Matusboa\LaravelExporter\Contract\CollectorRegistryInterface $registry
      * @param \Matusboa\LaravelExporter\Contract\Store\QueueMetricsStoreInterface $queueMetricsStore
@@ -43,7 +45,7 @@ class QueueJobsCollector implements CollectorInterface, CollectorWithRenderCallb
 
     public function bootstrap(): void
     {
-        Container::getInstance()->afterResolving(
+        $this->afterResolving(
             Dispatcher::class,
             static function (Dispatcher $dispatcher): void {
                 $dispatcher->listen(JobQueued::class, [

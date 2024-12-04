@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Matusboa\LaravelExporter;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
 use Matusboa\LaravelExporter\Contract\CollectorRegistryInterface;
 
 class LaravelExporterApplicationServiceProvider extends ServiceProvider
 {
-    public function boot(): void
+    public function register(): void
     {
-        $this->app->make(CollectorRegistryInterface::class)->registerCollectorClasses(
-            $this->collectors(),
-        );
+        $this->app->booting(function (Application $app): void {
+            $app->make(CollectorRegistryInterface::class)->registerCollectorClasses(
+                $this->collectors(),
+            );
+        });
     }
 
     /**
