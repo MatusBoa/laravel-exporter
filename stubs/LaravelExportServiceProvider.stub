@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Providers;
+
+use Matusboa\LaravelExporter\DefaultCollectors;
+use Matusboa\LaravelExporter\LaravelExporterApplicationServiceProvider;
+
+final class LaravelExporterServiceProvider extends LaravelExporterApplicationServiceProvider
+{
+    /**
+     * @inheritDoc
+     */
+    public function collectors(): array
+    {
+        return [
+            ...DefaultCollectors::all(),
+        ];
+    }
+}
