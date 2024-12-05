@@ -47,11 +47,11 @@ class LaravelExporterServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/laravel_exporter.php' => $this->app->configPath('laravel_exporter.php'),
+                __DIR__ . '/../config/laravel_exporter.php' => \config_path('laravel_exporter.php'),
             ], 'laravel-exporter-config');
 
             $this->publishes([
-                __DIR__ . '/../stubs/LaravelExportServiceProvider.stub' => $this->app->basePath('Providers/LaravelExporterServiceProvider.php'),
+                __DIR__ . '/../stubs/LaravelExportServiceProvider.stub' => \app_path('Providers/LaravelExporterServiceProvider.php'),
             ], 'laravel-exporter-provider');
         }
     }
