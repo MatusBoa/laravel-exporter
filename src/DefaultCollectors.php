@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Matusboa\LaravelExporter;
 
 use Matusboa\LaravelExporter\Collector\CacheCollector;

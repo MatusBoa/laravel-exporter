@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
-
 return [
     /*
-     * Cache driver to use for storing metrics.
-     * All drivers supported by Laravel can be used.
+     * Storage driver to use for storing metrics.
+     * Any cache driver supported by Laravel can be used.
      */
-    'driver' => \env('EXPORTER_CACHE_DRIVER', \env('CACHE_DRIVER', 'file')),
+    'storage_driver' => \env('EXPORTER_CACHE_DRIVER', \env('CACHE_DRIVER', 'file')),
 
     /**
      * Default namespace to use for metrics.

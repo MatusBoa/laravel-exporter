@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Matusboa\LaravelExporter\Listener\Cache;
 
 use Matusboa\LaravelExporter\Contract\Store\CacheMetricsStoreInterface;

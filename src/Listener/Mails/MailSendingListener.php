@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Matusboa\LaravelExporter\Listener\Mails;
 
 use Matusboa\LaravelExporter\Contract\Store\MailsMetricsStoreInterface;

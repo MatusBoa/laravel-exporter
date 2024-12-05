@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Matusboa\LaravelExporter;
 
 use Illuminate\Support\ServiceProvider;
@@ -30,7 +28,7 @@ class LaravelExporterServiceProvider extends ServiceProvider
             GenericMetricsStoreInterface::class,
             static fn (Application $app): GenericMetricsStoreInterface => new GenericMetricsStore(
                 $app['cache']->store(
-                    $app['config']->get('laravel_exporter.driver', null),
+                    $app['config']->get('laravel_exporter.storage_driver', null),
                 ),
             )
         );
