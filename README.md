@@ -33,9 +33,13 @@ Metrics can be rendered using `Matusboa\LaravelExporter\Contract\CollectorRender
 For example:
 
 ```php
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
+use Matusboa\LaravelExporter\Contract\CollectorRendererInterface;
+
 Route::get(
     '_metrics',
-    static fn (\Matusboa\LaravelExporter\Contract\CollectorRendererInterface $collectorRenderer): Response => new Response(
+    static fn (CollectorRendererInterface $collectorRenderer): Response => new Response(
         content: $collectorRenderer->render(),
         headers: [
             'Content-Type' => $collectorRenderer::mimeType(),
@@ -43,6 +47,8 @@ Route::get(
     ),
 );
 ```
+
+Metrics can be rendered also in controllers, using some kind of authorization.
 
 ## Custom collectors
 
